@@ -43,7 +43,14 @@ let product = function (_id, imageUrl, altTxt, name, description) {
     this.name = name;
     this.description = description;
 }
-
+    console.log(data)
+    for (let i = 0; i < data.length; i++) {
+        let items = document.querySelector("#items");
+        let htmlCard =  '<a href="./product.html?id='+data[i]._id+'"> <article> <img src='+ data[i].imageUrl +'" alt="'+data[i].altTxt+'"> <h3 class="productName">'+data[i].name+'</h3> <p class="productDescription">'+data[i].description+'</p> </article> </a>';
+         items.innerHTML += htmlCard
+        console.log(data[i].imageUrl)
+    }
+    });
 
 */    
 
@@ -236,6 +243,22 @@ let product = function (_id, imageUrl, altTxt, name, description) {
     console.log(topPosition)
     console.log(chiffre1.style)
 */
+
+    const promesse = new Promise ((resolve, reject) => {
+
+        const aleatoire = Math.trunc(Math.random() * 10) + 1;
+        console.log(aleatoire)
+
+        if (aleatoire >= 6) {
+            resolve (true)
+        } else {
+            reject (false)
+        }
+    })
+    .then((returnedProm) => {
+        console.log(returnedProm)
+    })
+    
         </script>
     </body>
 </html>
