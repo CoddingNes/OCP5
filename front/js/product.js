@@ -47,10 +47,12 @@ const boutton = document.querySelector('#addToCart');
 const colors = document.querySelector('#colors');
 const quantity = document.querySelector('#quantity');
 
-const addOrPush = (item) => {
-    if (item.id == id && item.colors == colors.value) {
+/*const addOrPush = (item) => {
+    if (item.id == id && item.colors === colors.value) {
         console.log("Il existe déjà dans le panier");
-        item.quantity += quantity.value;
+        item.quantity = parseInt(item.quantity) + parseInt(quantity.value);
+        localStorage.setItem("cart", JSON.stringify(cart))
+
     } else {
         console.log("Ajoutons-le au panier");
         cart.push({
@@ -58,19 +60,38 @@ const addOrPush = (item) => {
             quantity : quantity.value,
             colors : colors.value
         });
+        localStorage.setItem("cart", JSON.stringify(cart))
     }
+};*/
+
+const addOrPush = (cart) => {
+    console.log("addOrPush");
+    let addNew = true;
+    cart.forEach(item => {
+        console.log(item.id, item.colors)
+        if (item.id == id && item.colors === colors.value) {
+        console.log("Il existe déjà dans le panier");
+        item.quantity = parseInt(item.quantity) + parseInt(quantity.value);
+        localStorage.setItem("cart", JSON.stringify(cart));
+        addNew = false;
+        }
+    });
+    if (addNew) {
+    console.log("Ajoutons-le au panier");
+    cart.push({
+        id : id,
+        quantity : quantity.value,
+        colors : colors.value
+    });
+    localStorage.setItem("cart", JSON.stringify(cart));
+    };
 };
+
 
 boutton.addEventListener('click', (e) => {
 //Si le panier n'est pas vide et que le produit existe, implémenter le quantity         
 //Si le panier n'est pas vide et que le produit n'existe pas (ID+Color), le créer et le pusher
-    console.log(typeof(cart));
-    
-    if (cart) {
-        cart.forEach(addOrPush)
-    }
-//Si le panier est vide, créer tableau en ajoutant les données
-    else{
+    if (!localStorage.getItem('cart')) {
         let cart = [{
             id : id,
             quantity : quantity.value,
@@ -78,15 +99,24 @@ boutton.addEventListener('click', (e) => {
         }];
         console.log("Créons le panier!");
         console.log(cart);
+        localStorage.setItem("cart", JSON.stringify(cart))
     }
+//Si le panier est vide, créer tableau en ajoutant les données
+    else{
+        console.log("le panier existe déjà")
+        cart = JSON.parse(localStorage.getItem('cart'));
+//        cart.forEach(addOrPush)
+        console.log(cart);
+        addOrPush(cart)
+    }
+
 
 /*        cart.push({
             id : id,
             quantity : quantity.value,
             colors : colors.value
         })
-        let objdata = JSON.stringify(cart);
-        localStorage.setItem("obj",objdata);
+        localStorage.setItem("cart", JSON.stringify(cart))
         console.log(objJson);*/
 });
 

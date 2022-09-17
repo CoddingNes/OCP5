@@ -1,7 +1,7 @@
 //Lire le localStorage
-let objLinea = localStorage.getItem("obj");
-let objJson = JSON.parse(objLinea);
-console.log("Nous avons ajouté "+ objJson.length +" items");
+let objLinea = localStorage.getItem("cart");
+let cart = JSON.parse(objLinea);
+console.log("Nous avons ajouté "+ cart.length +" items");
 
     let totalQuantity = 0;
     let totalPrice = 0;
