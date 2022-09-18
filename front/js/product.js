@@ -64,11 +64,10 @@ const quantity = document.querySelector('#quantity');
     }
 };*/
 
+//Fonction appliquée si le panier n'est pas vide
 const addOrPush = (cart) => {
-    console.log("addOrPush");
-    let addNew = true;
+    let addNew = true; //On/Off pour ajouter nouvel item, passe en off s'il existe
     cart.forEach(item => {
-        console.log(item.id, item.colors)
         if (item.id == id && item.colors === colors.value) {
         console.log("Il existe déjà dans le panier");
         item.quantity = parseInt(item.quantity) + parseInt(quantity.value);
@@ -89,24 +88,21 @@ const addOrPush = (cart) => {
 
 
 boutton.addEventListener('click', (e) => {
-//Si le panier n'est pas vide et que le produit existe, implémenter le quantity         
-//Si le panier n'est pas vide et que le produit n'existe pas (ID+Color), le créer et le pusher
+//Si le panier est vide, créer tableau en ajoutant les données
     if (!localStorage.getItem('cart')) {
+        console.log("Créons le panier!");
         let cart = [{
             id : id,
             quantity : quantity.value,
             colors : colors.value
         }];
-        console.log("Créons le panier!");
-        console.log(cart);
         localStorage.setItem("cart", JSON.stringify(cart))
     }
-//Si le panier est vide, créer tableau en ajoutant les données
+//Si le panier n'est pas vide 
     else{
         console.log("le panier existe déjà")
         cart = JSON.parse(localStorage.getItem('cart'));
 //        cart.forEach(addOrPush)
-        console.log(cart);
         addOrPush(cart)
     }
 
