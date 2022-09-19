@@ -12,7 +12,7 @@ fetch(`http://localhost:3000/api/products/`)
   .then((data) => {
 
     const cartItems = document.querySelector('#cart__items');
-    let totalQuantityIni = 0;
+    let totalQuantity = 0;
     let totalPrice = 0;
 
 //Parcourir le localStorage
@@ -51,49 +51,44 @@ fetch(`http://localhost:3000/api/products/`)
                             </div>
                         </div>`
                 cartItems.appendChild(newArticle);
-                totalQuantityIni = parseInt(totalQuantityIni) + parseInt(item.quantity);
-
-
-//Mettre à jour les totaux                
-/*                totalQuantity += parseInt(item.quantity);
-                totalPrice += (itemDetails.price * item.quantity);
-                const totalQuantityElement = document.querySelector('#totalQuantity');
-                totalQuantityElement.innerHTML = totalQuantity;
-                const totalPriceElement = document.querySelector('#totalPrice');
-                totalPriceElement.innerHTML = totalPrice;
-*/            }//)
+                totalQuantity = parseInt(totalQuantity) + parseInt(item.quantity);
+                totalPrice = parseInt(totalPrice) + parseInt(itemDetails.price * parseInt(item.quantity));
+            }
         }
     }
 
 //Actualiser les quantités
     const itemQuantityElements = document.querySelectorAll(".itemQuantity");
     const totalQuantityElement = document.querySelector('#totalQuantity');
-    totalQuantityElement.innerHTML = totalQuantityIni;
-    itemQuantityElements.forEach((itemQuantityElement) => {
+    totalQuantityElement.innerHTML = totalQuantity;
 
+    const totalPriceElement = document.querySelector("#totalPrice");
+    totalPriceElement.innerHTML = totalPrice;
+
+    itemQuantityElements.forEach((itemQuantityElement) => {
         itemQuantityElement.addEventListener("input", (e) => {
             let input = e.target;
             let eQuantity = input.value;
             let eArticle = input.closest(".cart__item");
             let eId = eArticle.getAttribute("data-id");
             let eColors = eArticle.querySelector(".cart__item__content__description p");
+            let ePrice = eArticle.querySelector(".cart__item__content__description p:nth-of-type(2)").innerText;
 
+            totalQuantity = 0;
             cart.forEach(item => {
                 if (item.id == eId && item.colors === eColors.innerText) {
-                console.log("Modifions la quantité de cet item dans le localstorage");
+                totalPrice -= (parseInt(ePrice) * item.quantity);
                 item.quantity = eQuantity;
-                localStorage.setItem("cart", JSON.stringify(cart));
+                totalPrice += (parseInt(ePrice) * eQuantity);
+                totalPriceElement.innerHTML = totalPrice;
                 }
-            })
-            totalQuantityIni = 0;
-            cart.forEach(item => {
-                totalQuantityIni = parseInt(totalQuantityIni) + parseInt(item.quantity);
-                totalQuantityElement.innerHTML = totalQuantityIni;
+                localStorage.setItem("cart", JSON.stringify(cart));
+                totalQuantity = parseInt(totalQuantity) + parseInt(item.quantity);
+                totalQuantityElement.innerHTML = totalQuantity;
             })
         })
     })
-    totalQuantityElement.innerHTML = totalQuantityIni;
-
+    totalQuantityElement.innerHTML = totalQuantity;
 
 //Activer l'action du boutton Supprimer
     const deleteItemElements = document.querySelectorAll(".deleteItem");
@@ -105,23 +100,12 @@ fetch(`http://localhost:3000/api/products/`)
             let eColors = eArticle.querySelector(".cart__item__content__description p");
             if (confirm("Voulez-vous vraiment retirer cet article de votre panier?")) {
                 let itemIndex = cart.findIndex(i => i.id == eId && i.colors === eColors.innerText);
-//                console.log(itemIndex);
                 console.log("Supprimons cet item du localstorage :", cart.splice(itemIndex,1));
                 eArticle.remove();
                 localStorage.setItem("cart", JSON.stringify(cart));
             }
         })
     })
-
-//Afficher les totaux
-/*    const totalQuantityElement = document.querySelector('#totalQuantity');
-    let totalQuantity = 0;
-    itemQuantityElements.forEach((itemQuantityElement) => {
-        totalQuantity = totalQuantity += parseInt(itemQuantityElement.value);
-        totalQuantityElement.innerHTML = totalQuantity;
-    })
-    const totalPriceElement = document.querySelector('#totalPrice');
-*/
 
 });
 
