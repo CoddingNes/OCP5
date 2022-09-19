@@ -69,14 +69,14 @@ const addOrPush = (cart) => {
     let addNew = true; //On/Off pour ajouter nouvel item, passe en off s'il existe
     cart.forEach(item => {
         if (item.id == id && item.colors === colors.value) {
-        console.log("Il existe déjà dans le panier");
+        console.log("L'item existe déjà dans le panier, incrémentons-le");
         item.quantity = parseInt(item.quantity) + parseInt(quantity.value);
         localStorage.setItem("cart", JSON.stringify(cart));
         addNew = false;
         }
     });
     if (addNew) {
-    console.log("Ajoutons-le au panier");
+    console.log("Ajoutons l'item au panier");
     cart.push({
         id : id,
         quantity : quantity.value,
@@ -100,7 +100,7 @@ boutton.addEventListener('click', (e) => {
     }
 //Si le panier n'est pas vide 
     else{
-        console.log("le panier existe déjà")
+        console.log("Le panier existe déjà")
         cart = JSON.parse(localStorage.getItem('cart'));
 //        cart.forEach(addOrPush)
         addOrPush(cart)
