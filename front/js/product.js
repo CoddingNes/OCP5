@@ -47,23 +47,6 @@ const boutton = document.querySelector('#addToCart');
 const colors = document.querySelector('#colors');
 const quantity = document.querySelector('#quantity');
 
-/*const addOrPush = (item) => {
-    if (item.id == id && item.colors === colors.value) {
-        console.log("Il existe déjà dans le panier");
-        item.quantity = parseInt(item.quantity) + parseInt(quantity.value);
-        localStorage.setItem("cart", JSON.stringify(cart))
-
-    } else {
-        console.log("Ajoutons-le au panier");
-        cart.push({
-            id : id,
-            quantity : quantity.value,
-            colors : colors.value
-        });
-        localStorage.setItem("cart", JSON.stringify(cart))
-    }
-};*/
-
 //Fonction appliquée si le panier n'est pas vide
 const addOrPush = (cart) => {
     let addNew = true; //On/Off pour ajouter nouvel item, passe en off s'il existe
@@ -86,24 +69,28 @@ const addOrPush = (cart) => {
     };
 };
 
-
+//Ajout des produits au panier
 boutton.addEventListener('click', (e) => {
+    if (quantity.value < 1 || quantity.value > 100 || colors.value == "") {
+        alert("Veuillez saisir un nombre d'article entre 1 et 100 et choisir une couleur.");
+    } else {
 //Si le panier est vide, créer tableau en ajoutant les données
-    if (!localStorage.getItem('cart')) {
-        console.log("Créons le panier!");
-        let cart = [{
-            id : id,
-            quantity : quantity.value,
-            colors : colors.value
-        }];
-        localStorage.setItem("cart", JSON.stringify(cart))
-    }
+        if (!localStorage.getItem('cart')) {
+            console.log("Créons le panier!");
+            let cart = [{
+                id : id,
+                quantity : quantity.value,
+                colors : colors.value
+            }];
+            localStorage.setItem("cart", JSON.stringify(cart))
+        }
 //Si le panier n'est pas vide 
-    else{
-        console.log("Le panier existe déjà")
-        cart = JSON.parse(localStorage.getItem('cart'));
-//        cart.forEach(addOrPush)
-        addOrPush(cart)
+        else{
+            console.log("Le panier existe déjà")
+            cart = JSON.parse(localStorage.getItem('cart'));
+            addOrPush(cart)
+        }
+
     }
 
 
