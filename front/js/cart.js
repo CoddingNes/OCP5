@@ -57,14 +57,15 @@ fetch(`http://localhost:3000/api/products/`)
         }
     }
 
-//Actualiser les quantités
-    const itemQuantityElements = document.querySelectorAll(".itemQuantity");
+//Mise à jour des totaux lors de l'ouverture du panier                
     const totalQuantityElement = document.querySelector('#totalQuantity');
     totalQuantityElement.innerHTML = totalQuantity;
 
     const totalPriceElement = document.querySelector("#totalPrice");
     totalPriceElement.innerHTML = totalPrice;
 
+//Mise à jour des totaux lors de la modification des quantités                
+    const itemQuantityElements = document.querySelectorAll(".itemQuantity");
     itemQuantityElements.forEach((itemQuantityElement) => {
         itemQuantityElement.addEventListener("input", (e) => {
             let input = e.target;
@@ -88,7 +89,7 @@ fetch(`http://localhost:3000/api/products/`)
             })
         })
     })
-    totalQuantityElement.innerHTML = totalQuantity;
+//    totalQuantityElement.innerHTML = totalQuantity;
 
 //Activer l'action du boutton Supprimer
     const deleteItemElements = document.querySelectorAll(".deleteItem");
@@ -102,6 +103,7 @@ fetch(`http://localhost:3000/api/products/`)
             if (confirm("Voulez-vous vraiment retirer cet article de votre panier?")) {
                 let indexToDelete = cart.findIndex(i => i.id == eId && i.colors === eColors.innerText);
                 console.log("Supprimons cet item du localstorage :", cart[indexToDelete]);
+//Mise à jour des totaux suite suppression                
                 eQuantity = 0
                 totalQuantity = 0;
                 cart.forEach(item => {
@@ -111,14 +113,12 @@ fetch(`http://localhost:3000/api/products/`)
                         totalPrice += (parseInt(ePrice) * eQuantity);
                         totalPriceElement.innerHTML = totalPrice;
                     }
-                    localStorage.setItem("cart", JSON.stringify(cart));
                     totalQuantity = parseInt(totalQuantity) + parseInt(item.quantity);
                     totalQuantityElement.innerHTML = totalQuantity;
                 })
                 cart.splice(indexToDelete,1)
-                localStorage.setItem("cart", JSON.stringify(cart));
                 eArticle.remove();
-
+                localStorage.setItem("cart", JSON.stringify(cart));
             }
         })
     })
