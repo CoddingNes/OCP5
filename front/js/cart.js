@@ -2,6 +2,19 @@
 let cart = JSON.parse(localStorage.getItem("cart"));
 console.log("Il y a "+ cart.length +" items différents dans le panier");
 
+//Fonction masquer le formulaire de commande
+function masquerCde(cart) {
+    if (cart.length == 0) {
+        const total = document.querySelector(".cart__price");
+        const commande = document.querySelector(".cart__order");
+        const titrePanier = document.querySelector(".cartAndFormContainer h1");
+        titrePanier.innerHTML += " est vide";
+        total.style.display = "none";
+        commande.style.display = "none";
+    }
+}
+
+masquerCde(cart);
 
 //Appel de l'API
 /*cart.forEach(item => {
@@ -81,15 +94,14 @@ fetch(`http://localhost:3000/api/products/`)
                 totalPrice -= (parseInt(ePrice) * item.quantity);
                 item.quantity = eQuantity;
                 totalPrice += (parseInt(ePrice) * eQuantity);
-                totalPriceElement.innerHTML = totalPrice;
                 }
                 localStorage.setItem("cart", JSON.stringify(cart));
                 totalQuantity = parseInt(totalQuantity) + parseInt(item.quantity);
-                totalQuantityElement.innerHTML = totalQuantity;
             })
+            totalPriceElement.innerHTML = totalPrice;
+            totalQuantityElement.innerHTML = totalQuantity;
         })
     })
-//    totalQuantityElement.innerHTML = totalQuantity;
 
 //Activer l'action du boutton Supprimer
     const deleteItemElements = document.querySelectorAll(".deleteItem");
@@ -103,7 +115,8 @@ fetch(`http://localhost:3000/api/products/`)
             if (confirm("Voulez-vous vraiment retirer cet article de votre panier?")) {
                 let indexToDelete = cart.findIndex(i => i.id == eId && i.colors === eColors.innerText);
                 console.log("Supprimons cet item du localstorage :", cart[indexToDelete]);
-//Mise à jour des totaux suite suppression                
+
+//Mise à jour des totaux lors d'une suppression                
                 eQuantity = 0
                 totalQuantity = 0;
                 cart.forEach(item => {
@@ -111,27 +124,41 @@ fetch(`http://localhost:3000/api/products/`)
                         totalPrice -= (parseInt(ePrice) * (parseInt(item.quantity)));
                         item.quantity = eQuantity;
                         totalPrice += (parseInt(ePrice) * eQuantity);
-                        totalPriceElement.innerHTML = totalPrice;
                     }
                     totalQuantity = parseInt(totalQuantity) + parseInt(item.quantity);
-                    totalQuantityElement.innerHTML = totalQuantity;
                 })
+                totalQuantityElement.innerHTML = totalQuantity;
+                totalPriceElement.innerHTML = totalPrice;
                 cart.splice(indexToDelete,1)
                 eArticle.remove();
                 localStorage.setItem("cart", JSON.stringify(cart));
+                masquerCde(cart);
             }
         })
     })
 
-/*    const commander = document.querySelector("#order");
-    if (cart.length < 0) {
-        commander.disabled = true;
-    } else {
-        commander.disabled = false;
-    }
-*/
+    console.log(cart);
 
+
+/*
+//Contrôle du formulaire
+
+//Donnée d'entrée du formulaire
+    const formPrenom = document.querySelector("#firstName");
+    const formNom = document.querySelector("#lastName");
+    const formAdresse = document.querySelector("#address");
+    const formVille = document.querySelector("#city");
+    const formEmail = document.querySelector("#email");
+    infoClient = {
+        prenom : formPrenom.value,
+        nom : formNom.value,
+        adresse : formAdresse.value,
+        ville : formVille.value,
+        email : formEmail.value
+    };
+*/
 });
+
 
 
 //Erreurs
