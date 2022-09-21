@@ -98,16 +98,41 @@ fetch(`http://localhost:3000/api/products/`)
             let eArticle = deleteItem.closest(".cart__item");
             let eId = eArticle.getAttribute("data-id");
             let eColors = eArticle.querySelector(".cart__item__content__description p");
+            let ePrice = eArticle.querySelector(".cart__item__content__description p:nth-of-type(2)").innerText;
             if (confirm("Voulez-vous vraiment retirer cet article de votre panier?")) {
-                let itemIndex = cart.findIndex(i => i.id == eId && i.colors === eColors.innerText);
-                console.log("Supprimons cet item du localstorage :", cart.splice(itemIndex,1));
-                eArticle.remove();
+                let indexToDelete = cart.findIndex(i => i.id == eId && i.colors === eColors.innerText);
+                console.log("Supprimons cet item du localstorage :", cart[indexToDelete]);
+                eQuantity = 0
+                totalQuantity = 0;
+                cart.forEach(item => {
+                    if (item.id == cart[indexToDelete].id && item.colors === cart[indexToDelete].colors) {
+                        totalPrice -= (parseInt(ePrice) * (parseInt(item.quantity)));
+                        item.quantity = eQuantity;
+                        totalPrice += (parseInt(ePrice) * eQuantity);
+                        totalPriceElement.innerHTML = totalPrice;
+                    }
+                    localStorage.setItem("cart", JSON.stringify(cart));
+                    totalQuantity = parseInt(totalQuantity) + parseInt(item.quantity);
+                    totalQuantityElement.innerHTML = totalQuantity;
+                })
+                cart.splice(indexToDelete,1)
                 localStorage.setItem("cart", JSON.stringify(cart));
+                eArticle.remove();
+
             }
         })
     })
 
+/*    const commander = document.querySelector("#order");
+    if (cart.length < 0) {
+        commander.disabled = true;
+    } else {
+        commander.disabled = false;
+    }
+*/
+
 });
+
 
 //Erreurs
 const firstNameErrorMsg = document.querySelector('#firstNameErrorMsg');
@@ -115,3 +140,4 @@ const lastNameErrorMsg = document.querySelector('#lastNameErrorMsg');
 const addressErrorMsg = document.querySelector('#addressErrorMsg');
 const cityErrorMsg = document.querySelector('#cityErrorMsg');
 const emailErrorMsg = document.querySelector('#emailErrorMsg');
+
