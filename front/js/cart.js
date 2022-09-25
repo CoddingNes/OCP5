@@ -14,12 +14,13 @@ function masquerCde(cart) {
     }
 }
 
+
 masquerCde(cart);
 
 let totalQuantity = 0;
 let totalPrice = 0;
 
-//Appel de l'API
+//Appel ciblé de l'API pour chaque item
 cart.forEach(item => {
 fetch(`http://localhost:3000/api/products/${item.id}`)
   .then((response) => response.json())
@@ -27,7 +28,8 @@ fetch(`http://localhost:3000/api/products/${item.id}`)
 
     const cartItems = document.querySelector('#cart__items');
 
-//Créer et configurer un nouvel article pour chaque item                
+//Créer et configurer un nouvel article pour chaque item  
+    //Création des éléments              
     let newArticle = document.createElement('article');
     newArticle.setAttribute('class', 'cart__item');
     newArticle.setAttribute('data-id', itemDetails._id);
@@ -66,6 +68,7 @@ fetch(`http://localhost:3000/api/products/${item.id}`)
     pDeleteElement.className = 'deleteItem';
     pDeleteElement.innerText = 'Supprimer';
 
+    //Agencement des éléments
     cartItems.append(newArticle);
     newArticle.append(cartItemImgElement, cartItemContentElement);
     cartItemImgElement.append(imgElement);
@@ -76,38 +79,10 @@ fetch(`http://localhost:3000/api/products/${item.id}`)
     cartItemContentSettingsDeleteElement.append(pDeleteElement);
 
 
-/*                newArticle.innerHTML = `
-                        <div class="cart__item__img">
-                            <img src="${itemDetails.imageUrl}" alt="${itemDetails.altTxt}">
-                        </div>
-                        <div class="cart__item__content">
-                            <div class="cart__item__content__description">
-                                <h2>${itemDetails.name}</h2>
-                                <p>${item.colors}</p>
-                                <p>${itemDetails.price} €</p>
-                            </div>
-                            <div class="cart__item__content__settings">
-                                <div class="cart__item__content__settings__quantity">
-                                    <p>Qté : </p>
-                                    <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${item.quantity}">
-                                </div>
-                                <div class="cart__item__content__settings__delete">
-                                    <p class="deleteItem">Supprimer</p>
-                                </div>
-                            </div>
-                        </div>`*/
-
-
-
-
-    cartItems.appendChild(newArticle);
+//Mise à jour des totaux lors de l'ouverture du panier                
     totalQuantity = parseInt(totalQuantity) + parseInt(item.quantity);
     totalPrice = parseInt(totalPrice) + parseInt(itemDetails.price * parseInt(item.quantity));
-//            }
-//        }
-//    }
 
-//Mise à jour des totaux lors de l'ouverture du panier                
     const totalQuantityElement = document.querySelector('#totalQuantity');
     totalQuantityElement.innerHTML = totalQuantity;
 
@@ -144,251 +119,140 @@ fetch(`http://localhost:3000/api/products/${item.id}`)
     const deleteItemElements = document.querySelectorAll(".deleteItem");
     if(deleteItemElements.length == cart.length) {
         deleteItemElements.forEach((deleteItemElement) => {
-            console.log(deleteItemElements)
             deleteItemElement.addEventListener("click", (e) => {
                 let eArticle = e.target.closest(".cart__item");
                 let eId = eArticle.getAttribute("data-id");
                 let eColors = eArticle.querySelector(".cart__item__content__description p").innerText;
-                console.log(eColors);
                 let indexToDelete = cart.findIndex(i => i.id == eId && i.colors === eColors);
                 let ePrice = eArticle.querySelector(".cart__item__content__description p:nth-of-type(2)").innerText;
                 let eQuantity = eArticle.querySelector(".cart__item__content__settings__quantity input").value;
-                        if (confirm("Voulez-vous vraiment retirer cet article de votre panier?")) {
-                            console.log("Supprimons cet item du localstorage :", cart[indexToDelete]);
-        //MAJ des totaux                
-                            totalPrice -= (parseInt(ePrice) * (parseInt(eQuantity)));
-                            totalPriceElement.innerHTML = totalPrice;
-                            totalQuantity -= eQuantity;
-                            totalQuantityElement.innerHTML = totalQuantity;
-        //Suppression de l'item                
-                            cart.splice(indexToDelete,1)
-                            eArticle.remove();
-                            localStorage.setItem("cart", JSON.stringify(cart));
-                        }
-                        masquerCde(cart);
+                if (confirm("Voulez-vous vraiment retirer cet article de votre panier?")) {
+                    console.log("Supprimons cet item du localstorage :", cart[indexToDelete]);
+    //MAJ des totaux                
+                    totalPrice -= (parseInt(ePrice) * (parseInt(eQuantity)));
+                    totalPriceElement.innerHTML = totalPrice;
+                    totalQuantity -= eQuantity;
+                    totalQuantityElement.innerHTML = totalQuantity;
+    //Suppression de l'item                
+                    cart.splice(indexToDelete,1)
+                    eArticle.remove();
+                    localStorage.setItem("cart", JSON.stringify(cart));
+                }
+                masquerCde(cart);
             })
         });
     }
-/*    const deleteItemElements = document.querySelectorAll(".deleteItem");
-    deleteItemElements.forEach((deleteItemElement) => {
-        deleteItemElement.addEventListener("click", (e) => {
-            let eArticle = e.target.closest(".cart__item");
-            let eId = eArticle.getAttribute("data-id");
-            let eColors = eArticle.querySelector(".cart__item__content__description p").innerText;
-            console.log(eColors);
-            let indexToDelete = cart.findIndex(i => i.id == eId && i.colors === eColors);
-            let ePrice = eArticle.querySelector(".cart__item__content__description p:nth-of-type(2)").innerText;
-            let eQuantity = eArticle.querySelector(".cart__item__content__settings__quantity input").value;
-            for (let i = 0; i < cart.length; i++) {
-                if (cart[i].id == eId && cart[i].colors === eColors) {
-                    if (confirm("Voulez-vous vraiment retirer cet article de votre panier?")) {
-                        console.log("Supprimons cet item du localstorage :", cart[indexToDelete]);
-//MAJ des totaux                
-                        totalPrice -= (parseInt(ePrice) * (parseInt(eQuantity)));
-                        totalPriceElement.innerHTML = totalPrice;
-                        totalQuantity -= eQuantity;
-                        totalQuantityElement.innerHTML = totalQuantity;
-//Suppression de l'item                
-                        cart.splice(indexToDelete,1)
-                        eArticle.remove();
-                        localStorage.setItem("cart", JSON.stringify(cart));
-                    }
-                    masquerCde(cart);
-                }
-            }
-        })
-    })*/
-//Mise à jour des totaux lors d'une suppression                
-/*                eQuantity = 0
-                totalQuantity = 0;
-                cart.forEach(item => {
-                    if (item.id == cart[indexToDelete].id && item.colors === cart[indexToDelete].colors) {
-                        totalPrice -= (parseInt(ePrice) * (parseInt(item.quantity)));
-                        item.quantity = eQuantity;
-                        totalPrice += (parseInt(ePrice) * eQuantity);
-                    }
-                    totalQuantity = parseInt(totalQuantity) + parseInt(item.quantity);
-                })
-*/
-
-/*
-//Contrôle du formulaire
-
-//Donnée d'entrée du formulaire
-    const formPrenom = document.querySelector("#firstName");
-    const formNom = document.querySelector("#lastName");
-    const formAdresse = document.querySelector("#address");
-    const formVille = document.querySelector("#city");
-    const formEmail = document.querySelector("#email");
-    infoClient = {
-        prenom : formPrenom.value,
-        nom : formNom.value,
-        adresse : formAdresse.value,
-        ville : formVille.value,
-        email : formEmail.value
-    };
-*/
-
 
   })
 })
 
 
-/*
+
 //Contrôle du formulaire
 
-//Donnée d'entrée du formulaire
-    const formPrenom = document.querySelector("#firstName");
-    const formNom = document.querySelector("#lastName");
-    const formAdresse = document.querySelector("#address");
-    const formVille = document.querySelector("#city");
-    const formEmail = document.querySelector("#email");
-    infoClient = {
-        prenom : formPrenom.value,
-        nom : formNom.value,
-        adresse : formAdresse.value,
-        ville : formVille.value,
-        email : formEmail.value
-    };
-*/
-/*});*/
+//Sélection des éléments d'entrée du formulaire
+const formPrenomElement = document.querySelector("#firstName");
+const formNomElement = document.querySelector("#lastName");
+const formAdresseElement = document.querySelector("#address");
+const formVilleElement = document.querySelector("#city");
+const formEmailElement = document.querySelector("#email");
+//Sélection des éléments erreurs du DOM
+const firstNameErrorMsgElement = document.querySelector('#firstNameErrorMsg');
+const lastNameErrorMsgElement = document.querySelector('#lastNameErrorMsg');
+const addressErrorMsgElement = document.querySelector('#addressErrorMsg');
+const cityErrorMsgElement = document.querySelector('#cityErrorMsg');
+const emailErrorMsgElement = document.querySelector('#emailErrorMsg');
+//Masques de contrôle des données
+const masquePrenom = /[0-9]/;
+const masqueNom = /[0-9]/;
+const masqueAdresse = /[2]/;
+const masqueVille = /[2]/;
+const masqueEmail = /[0-9]/;
+//Messages d'erreur
+const prenomErrorText = 'Veuillez saisir un prénom valide (aucun chiffre ni caractère spécial autre que le "-")' 
+const nomErrorText = 'Veuillez saisir un nom valide (aucun chiffre ni caractère spécial autre que le "-")' 
+const adresseErrorText = 'Veuillez saisir une adresse valide ()' 
+const villeErrorText = 'Veuillez saisir une ville valide ()' 
+const emailErrorText = 'Veuillez saisir un email valide ()' 
+//Récupération des données
+let prenom = "";
+let nom = "";
+let adresse = "";
+let ville = "";
+let email = "";
+let client = "";
 
 
-/*
-//Erreurs
-const firstNameErrorMsg = document.querySelector('#firstNameErrorMsg');
-const lastNameErrorMsg = document.querySelector('#lastNameErrorMsg');
-const addressErrorMsg = document.querySelector('#addressErrorMsg');
-const cityErrorMsg = document.querySelector('#cityErrorMsg');
-const emailErrorMsg = document.querySelector('#emailErrorMsg');
-
-*/
-
-
-
-
-
-
-
-
-/*fetch(`http://localhost:3000/api/products/`)
-  .then((response) => response.json())
-  .then((data) => {
-
-    const cartItems = document.querySelector('#cart__items');
-    let totalQuantity = 0;
-    let totalPrice = 0;
-
-//Parcourir le localStorage
-    for (let i = 0; i < cart.length; i++) {
-        let item = cart[i];
-
-//Identifier les items du localStorage dans l'API grâce à l'ID        
-        for (let i = 0; i < data.length; i++) {
-            if (data[i]._id == item.id) {
-                let itemDetails = data[i];
-
-
-//Créer et configurer un nouvel article pour chaque item                
-                let newArticle = document.createElement('article');
-                newArticle.setAttribute('class', 'cart__item');
-                newArticle.setAttribute('data-id', itemDetails._id);
-                newArticle.setAttribute('data-color', item.colors);
-                newArticle.innerHTML = `
-                        <div class="cart__item__img">
-                            <img src="${itemDetails.imageUrl}" alt="${itemDetails.altTxt}">
-                        </div>
-                        <div class="cart__item__content">
-                            <div class="cart__item__content__description">
-                                <h2>${itemDetails.name}</h2>
-                                <p>${item.colors}</p>
-                                <p>${itemDetails.price} €</p>
-                            </div>
-                            <div class="cart__item__content__settings">
-                                <div class="cart__item__content__settings__quantity">
-                                    <p>Qté : </p>
-                                    <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${item.quantity}">
-                                </div>
-                                <div class="cart__item__content__settings__delete">
-                                    <p class="deleteItem">Supprimer</p>
-                                </div>
-                            </div>
-                        </div>`
-//const cartItemImg = document.createElement('div');
-                cartItems.appendChild(newArticle);
-                totalQuantity = parseInt(totalQuantity) + parseInt(item.quantity);
-                totalPrice = parseInt(totalPrice) + parseInt(itemDetails.price * parseInt(item.quantity));
-            }
-        }
+function errorText (e, masque, element, message, donnee) {
+    if (e.target.value.match(masque)) {
+        element.innerHTML = message;
+    } else {
+        element.innerHTML = "";
+        donnee = e.target.value;
+        console.log(donnee);
     }
+}
 
-//Mise à jour des totaux lors de l'ouverture du panier                
-    const totalQuantityElement = document.querySelector('#totalQuantity');
-    totalQuantityElement.innerHTML = totalQuantity;
+//Vérifier les saisies du formulaire
+formPrenomElement.addEventListener("input", (e) => {errorText(e, masquePrenom, firstNameErrorMsgElement, prenomErrorText, prenom)});
+formNomElement.addEventListener("input", (e) => {errorText(e, masqueNom, lastNameErrorMsgElement, nomErrorText, nom)});
+formAdresseElement.addEventListener("input", (e) => {errorText(e, masqueAdresse, addressErrorMsgElement, adresseErrorText, adresse)});
+formVilleElement.addEventListener("input", (e) => {errorText(e, masqueVille, cityErrorMsgElement, villeErrorText, ville)});
+formEmailElement.addEventListener("input", (e) => {errorText(e, masqueEmail, emailErrorMsgElement, emailErrorText, email)});
 
-    const totalPriceElement = document.querySelector("#totalPrice");
-    totalPriceElement.innerHTML = totalPrice;
 
-//Mise à jour des totaux lors de la modification des quantités                
-    const itemQuantityElements = document.querySelectorAll(".itemQuantity");
-    itemQuantityElements.forEach((itemQuantityElement) => {
-        itemQuantityElement.addEventListener("input", (e) => {
-            let input = e.target;
-            let eQuantity = input.value;
-            let eArticle = input.closest(".cart__item");
-            let eId = eArticle.getAttribute("data-id");
-            let eColors = eArticle.querySelector(".cart__item__content__description p");
-            let ePrice = eArticle.querySelector(".cart__item__content__description p:nth-of-type(2)").innerText;
+function infoContact (prenom, nom, adresse, ville, email) {
+    this.prenom = prenom,
+    this.nom = nom,
+    this.adresse = adresse,
+    this.ville = ville,
+    this.email = email
+};
 
-            totalQuantity = 0;
-            cart.forEach(item => {
-                if (item.id == eId && item.colors === eColors.innerText) {
-                totalPrice -= (parseInt(ePrice) * item.quantity);
-                item.quantity = eQuantity;
-                totalPrice += (parseInt(ePrice) * eQuantity);
-                }
-                localStorage.setItem("cart", JSON.stringify(cart));
-                totalQuantity = parseInt(totalQuantity) + parseInt(item.quantity);
-            })
-            totalPriceElement.innerHTML = totalPrice;
-            totalQuantityElement.innerHTML = totalQuantity;
-        })
-    })
+//Créer un objet contact
+const commander = document.querySelector('#order');
+commander.addEventListener("click", (e) => {
+    e.preventDefault();
+    let prenom = formPrenomElement.value;
+    let nom = formNomElement.value;
+    let adresse = formAdresseElement.value;
+    let ville = formVilleElement.value;
+    let email = formEmailElement.value;
+    if (prenom!=="" && firstNameErrorMsgElement.innerHTML=="" && nom!=="" && lastNameErrorMsgElement.innerHTML=="" && adresse!=="" && addressErrorMsgElement.innerHTML=="" && ville!=="" && cityErrorMsgElement.innerHTML=="" && email!=="" && emailErrorMsgElement.innerHTML=="") {
+        let contact = new infoContact (prenom, nom, adresse, ville, email);
+        localStorage.setItem('contact', JSON.stringify(contact));
+    }
+});
 
-//Activer l'action du boutton Supprimer
-    const deleteItemElements = document.querySelectorAll(".deleteItem");
-    deleteItemElements.forEach((deleteItemElement) => {
-        deleteItemElement.addEventListener("click", (e) => {
-            let deleteItem = e.target;
-            let eArticle = deleteItem.closest(".cart__item");
-            let eId = eArticle.getAttribute("data-id");
-            let eColors = eArticle.querySelector(".cart__item__content__description p");
-            let ePrice = eArticle.querySelector(".cart__item__content__description p:nth-of-type(2)").innerText;
-            if (confirm("Voulez-vous vraiment retirer cet article de votre panier?")) {
-                let indexToDelete = cart.findIndex(i => i.id == eId && i.colors === eColors.innerText);
-                console.log("Supprimons cet item du localstorage :", cart[indexToDelete]);
 
-//Mise à jour des totaux lors d'une suppression                
-                eQuantity = 0
-                totalQuantity = 0;
-                cart.forEach(item => {
-                    if (item.id == cart[indexToDelete].id && item.colors === cart[indexToDelete].colors) {
-                        totalPrice -= (parseInt(ePrice) * (parseInt(item.quantity)));
-                        item.quantity = eQuantity;
-                        totalPrice += (parseInt(ePrice) * eQuantity);
-                    }
-                    totalQuantity = parseInt(totalQuantity) + parseInt(item.quantity);
-                })
-                totalQuantityElement.innerHTML = totalQuantity;
-                totalPriceElement.innerHTML = totalPrice;
-                cart.splice(indexToDelete,1)
-                eArticle.remove();
-                localStorage.setItem("cart", JSON.stringify(cart));
-                masquerCde(cart);
-            }
-        })
-    })
 
-    console.log(cart);
+/*    if (!localStorage.getItem('contact') && prenom!=="" && firstNameErrorMsgElement.innerHTML=="" && nom!=="" && lastNameErrorMsgElement.innerHTML=="" && adresse!=="" && addressErrorMsgElement.innerHTML=="" && ville!=="" && cityErrorMsgElement.innerHTML=="" && email!=="" && emailErrorMsgElement.innerHTML=="") {
+        console.log("pas de contact existant");
+        let contactListe = [{
+            prenom : prenom, 
+            nom : nom, 
+            adresse : adresse, 
+            ville : ville,
+            email : email
+        }];
+        localStorage.setItem('contact', JSON.stringify(contactListe));
+    } else if (prenom!=="" && firstNameErrorMsgElement.innerHTML=="" && nom!=="" && lastNameErrorMsgElement.innerHTML=="" && adresse!=="" && addressErrorMsgElement.innerHTML=="" && ville!=="" && cityErrorMsgElement.innerHTML=="" && email!=="" && emailErrorMsgElement.innerHTML=="") {
+        console.log("contact existant");
+        contactListe = JSON.parse(localStorage.getItem('contact'));
+        let contact = new infoContact (prenom, nom, adresse, ville, email);
+        contactListe.push(contact);
+        localStorage.setItem('contact', JSON.stringify(contactListe));
+    }
+}) 
 */
+//}
+    
 
+                                                                                
+    
+    
+    
+    
+    
+    
+    //Créer un tableau de produit
