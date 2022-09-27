@@ -167,7 +167,7 @@ const masquePrenom = /[0-9]/;
 const masqueNom = /[0-9]/;
 const masqueAdresse = /[2]/;
 const masqueVille = /[2]/;
-const masqueEmail = /[0-9]/;
+const masqueEmail = /2/;
 //Messages d'erreur
 const prenomErrorText = 'Veuillez saisir un prénom valide (aucun chiffre ni caractère spécial autre que le "-")' 
 const nomErrorText = 'Veuillez saisir un nom valide (aucun chiffre ni caractère spécial autre que le "-")' 
@@ -182,7 +182,7 @@ let ville = "";
 let email = "";
 let client = "";
 
-
+//Fonction d'affichage des erreurs de saisie du formulaire
 function errorText (e, masque, element, message, donnee) {
     if (e.target.value.match(masque)) {
         element.innerHTML = message;
@@ -200,19 +200,47 @@ formAdresseElement.addEventListener("input", (e) => {errorText(e, masqueAdresse,
 formVilleElement.addEventListener("input", (e) => {errorText(e, masqueVille, cityErrorMsgElement, villeErrorText, ville)});
 formEmailElement.addEventListener("input", (e) => {errorText(e, masqueEmail, emailErrorMsgElement, emailErrorText, email)});
 
-
+//Fonction de création d'un contact
 function infoContact (prenom, nom, adresse, ville, email) {
-    this.prenom = prenom,
-    this.nom = nom,
-    this.adresse = adresse,
-    this.ville = ville,
+    this.firstName = prenom,
+    this.lastName = nom,
+    this.address = adresse,
+    this.city = ville,
     this.email = email
 };
 
-//Créer un objet contact
+//Fonction de suppression du panier
+const deleteCart = () => {
+    delete(cart);
+    localStorage.clear();
+};
+
+//Requête post et réception du n° de commande
+async function sendOrder (contact, products) {
+    try {
+        let response = await fetch('http://localhost:3000/api/products/order', {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json;charset=utf-8'
+        },
+        body: JSON.stringify({contact, products})
+        });
+        const result = await response.json();
+    //Suppression du panier
+        deleteCart();
+    //Redirection vers confirmation de commande
+        window.location = `confirmation.html?orderId=${result.orderId}`;
+    }
+    catch (error) {
+        console.error(error);
+    }
+};
+
+//Lancer la commande
 const commander = document.querySelector('#order');
 commander.addEventListener("click", (e) => {
     e.preventDefault();
+    //Créer un objet contact    
     let prenom = formPrenomElement.value;
     let nom = formNomElement.value;
     let adresse = formAdresseElement.value;
@@ -220,31 +248,20 @@ commander.addEventListener("click", (e) => {
     let email = formEmailElement.value;
     if (prenom!=="" && firstNameErrorMsgElement.innerHTML=="" && nom!=="" && lastNameErrorMsgElement.innerHTML=="" && adresse!=="" && addressErrorMsgElement.innerHTML=="" && ville!=="" && cityErrorMsgElement.innerHTML=="" && email!=="" && emailErrorMsgElement.innerHTML=="") {
         let contact = new infoContact (prenom, nom, adresse, ville, email);
-        localStorage.setItem('contact', JSON.stringify(contact));
+    //Créer un array product
+        let products = [];
+        cart.forEach(item => {
+            for (let i = 0; i < item.quantity; i++) {
+                let id = item.id;
+                products.push(id);
+            };
+        });
+    console.log(contact, products);
+    //Requête post et réception du n° de commande
+    sendOrder(contact, products);
     }
 });
 
-
-
-/*    if (!localStorage.getItem('contact') && prenom!=="" && firstNameErrorMsgElement.innerHTML=="" && nom!=="" && lastNameErrorMsgElement.innerHTML=="" && adresse!=="" && addressErrorMsgElement.innerHTML=="" && ville!=="" && cityErrorMsgElement.innerHTML=="" && email!=="" && emailErrorMsgElement.innerHTML=="") {
-        console.log("pas de contact existant");
-        let contactListe = [{
-            prenom : prenom, 
-            nom : nom, 
-            adresse : adresse, 
-            ville : ville,
-            email : email
-        }];
-        localStorage.setItem('contact', JSON.stringify(contactListe));
-    } else if (prenom!=="" && firstNameErrorMsgElement.innerHTML=="" && nom!=="" && lastNameErrorMsgElement.innerHTML=="" && adresse!=="" && addressErrorMsgElement.innerHTML=="" && ville!=="" && cityErrorMsgElement.innerHTML=="" && email!=="" && emailErrorMsgElement.innerHTML=="") {
-        console.log("contact existant");
-        contactListe = JSON.parse(localStorage.getItem('contact'));
-        let contact = new infoContact (prenom, nom, adresse, ville, email);
-        contactListe.push(contact);
-        localStorage.setItem('contact', JSON.stringify(contactListe));
-    }
-}) 
-*/
 //}
     
 
@@ -255,4 +272,4 @@ commander.addEventListener("click", (e) => {
     
     
     
-    //Créer un tableau de produit
+    
