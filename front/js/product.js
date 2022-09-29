@@ -1,7 +1,7 @@
 //Récupoération de l'ID produit stocké dans l'URL
 let params = (new URL(document.location)).searchParams;
 let id = params.get('id');
-//console.log(id);
+console.log(id);
 
 //Ajout des différents éléments dynamiques sur la page product
 const imgNode = document.querySelector('.item__img');
@@ -69,6 +69,18 @@ const addOrPush = (cart) => {
     };
 };
 
+//Tri des items du Cart par ID
+const sortCart = () => {
+    if (cart.length > 1) {
+        cart.sort((x, y) => {
+            if (x.id < y.id) {return -1;}
+            if (x.id > y.id) {return 1;}
+            return 0;
+        });
+        localStorage.setItem("cart", JSON.stringify(cart));
+    }
+}
+    
 //Ajout des produits au panier
 boutton.addEventListener('click', (e) => {
     if (quantity.value < 1 || quantity.value > 100 || colors.value == "") {
@@ -90,16 +102,21 @@ boutton.addEventListener('click', (e) => {
             cart = JSON.parse(localStorage.getItem('cart'));
             addOrPush(cart)
         }
-
+        alert("Votre produit a bien été ajouté au panier");
+        sortCart();
     }
-
-
-/*        cart.push({
-            id : id,
-            quantity : quantity.value,
-            colors : colors.value
-        })
-        localStorage.setItem("cart", JSON.stringify(cart))
-        console.log(objJson);*/
 });
+
+/*
+//Tri des items du Cart par ID
+if (cart.length > 1) {
+    function sortCart(x, y){
+        if (x.id < y.id) {return -1;}
+        if (x.id > y.id) {return 1;}
+        return 0;
+    }
+    cart.sort(sortCart);
+    localStorage.setItem("cart", JSON.stringify(cart));
+}
+*/
 
