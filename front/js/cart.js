@@ -8,6 +8,17 @@ if (!cart || cart.length == 0) {
     console.log("Il y a "+ cart.length +" items différents dans le panier");
 }
 
+//Tri des items du Cart par ID
+function sortCart(x, y){
+    if (x.id < y.id) {return -1;}
+    if (x.id > y.id) {return 1;}
+    return 0;
+}
+var sortedCart = cart.sort(sortCart);
+localStorage.setItem("cart", JSON.stringify(sortedCart));
+console.log(sortedCart);
+
+
 //Fonction masquer le formulaire de commande
 function masquerCde() {
     if (!cart || cart.length == 0) {
@@ -29,63 +40,63 @@ if (cart) {
     //Appel ciblé de l'API pour chaque item
 //    for (let i = 0; i < cart.length; i++) {
 //        let item = cart[i];
-    cart.forEach(item => {
-        fetch(`http://localhost:3000/api/products/${item.id}`)
-        .then((response) => response.json())
-        .then((itemDetails) => {
-console.log(item.id);
-            const cartItems = document.querySelector('#cart__items');
+cart.forEach(item => {
+    console.log(item.id);
+    const cartItems = document.querySelector('#cart__items');
 
-        //Créer et configurer un nouvel article pour chaque item  
-            //Création des éléments              
-            let newArticle = document.createElement('article');
-            newArticle.setAttribute('class', 'cart__item');
-            newArticle.setAttribute('data-id', itemDetails._id);
-            newArticle.setAttribute('data-color', item.colors);
-            const cartItemImgElement = document.createElement('div');
-            cartItemImgElement.className = 'cart__item__img';
-            const imgElement = document.createElement('img');
-            imgElement.src = itemDetails.imageUrl;
-            imgElement.alt = itemDetails.altTxt;
-            const cartItemContentElement = document.createElement('div');
-            cartItemContentElement.className = 'cart__item__content';
-            const cartItemContentDescriptionElement = document.createElement('div');
-            cartItemContentDescriptionElement.className = 'cart__item__content__description';
-            const h2Element = document.createElement('h2');
-            h2Element.innerText = itemDetails.name;
-            const pColorElement = document.createElement('p');
-            pColorElement.innerText = item.colors;
-            const pPriceElement = document.createElement('p');
-            pPriceElement.innerText = itemDetails.price;
-            const cartItemContentSettingsElement = document.createElement('div');
-            cartItemContentSettingsElement.className = 'cart__item__content__settings';
-            const cartItemContentSettingsQuantityElement = document.createElement('div');
-            cartItemContentSettingsQuantityElement.className = 'cart__item__content__settings__quantity';
-            const pQuantityElement = document.createElement('p');
-            pQuantityElement.innerText = 'Qté : ';
-            const inputItemQuantityElement = document.createElement('input');
-            inputItemQuantityElement.type = 'number';
-            inputItemQuantityElement.className = 'itemQuantity';
-            inputItemQuantityElement.name = 'itemQuantity';
-            inputItemQuantityElement.min = '1';
-            inputItemQuantityElement.max = '100';
-            inputItemQuantityElement.value = item.quantity;
-            const cartItemContentSettingsDeleteElement = document.createElement('div');
-            cartItemContentSettingsDeleteElement.className = 'cart__item__content__settings__delete';
-            const pDeleteElement = document.createElement('p');
-            pDeleteElement.className = 'deleteItem';
-            pDeleteElement.innerText = 'Supprimer';
+//Créer et configurer un nouvel article pour chaque item  
+    //Création des éléments              
+    let newArticle = document.createElement('article');
+    newArticle.setAttribute('class', 'cart__item');
+    newArticle.setAttribute('data-color', item.colors);
+    const cartItemImgElement = document.createElement('div');
+    cartItemImgElement.className = 'cart__item__img';
+    const imgElement = document.createElement('img');
+    const cartItemContentElement = document.createElement('div');
+    cartItemContentElement.className = 'cart__item__content';
+    const cartItemContentDescriptionElement = document.createElement('div');
+    cartItemContentDescriptionElement.className = 'cart__item__content__description';
+    const h2Element = document.createElement('h2');
+    const pColorElement = document.createElement('p');
+    const pPriceElement = document.createElement('p');
+    pColorElement.innerText = item.colors;
+    const cartItemContentSettingsElement = document.createElement('div');
+    cartItemContentSettingsElement.className = 'cart__item__content__settings';
+    const cartItemContentSettingsQuantityElement = document.createElement('div');
+    cartItemContentSettingsQuantityElement.className = 'cart__item__content__settings__quantity';
+    const pQuantityElement = document.createElement('p');
+    pQuantityElement.innerText = 'Qté : ';
+    const inputItemQuantityElement = document.createElement('input');
+    inputItemQuantityElement.type = 'number';
+    inputItemQuantityElement.className = 'itemQuantity';
+    inputItemQuantityElement.name = 'itemQuantity';
+    inputItemQuantityElement.min = '1';
+    inputItemQuantityElement.max = '100';
+    inputItemQuantityElement.value = item.quantity;
+    const cartItemContentSettingsDeleteElement = document.createElement('div');
+    cartItemContentSettingsDeleteElement.className = 'cart__item__content__settings__delete';
 
-            //Agencement des éléments
-            cartItems.append(newArticle);
-            newArticle.append(cartItemImgElement, cartItemContentElement);
-            cartItemImgElement.append(imgElement);
-            cartItemContentElement.append(cartItemContentDescriptionElement, cartItemContentSettingsElement);
-            cartItemContentDescriptionElement.append(h2Element, pColorElement, pPriceElement);
-            cartItemContentSettingsElement.append(cartItemContentSettingsQuantityElement, cartItemContentSettingsDeleteElement);
-            cartItemContentSettingsQuantityElement.append(pQuantityElement, inputItemQuantityElement);
-            cartItemContentSettingsDeleteElement.append(pDeleteElement);
-
+    //Agencement des éléments
+    cartItems.append(newArticle);
+    newArticle.append(cartItemImgElement, cartItemContentElement);
+    cartItemImgElement.append(imgElement);
+    cartItemContentElement.append(cartItemContentDescriptionElement, cartItemContentSettingsElement);
+    cartItemContentDescriptionElement.append(h2Element, pColorElement, pPriceElement);
+    cartItemContentSettingsElement.append(cartItemContentSettingsQuantityElement, cartItemContentSettingsDeleteElement);
+    cartItemContentSettingsQuantityElement.append(pQuantityElement, inputItemQuantityElement);
+        
+    fetch(`http://localhost:3000/api/products/${item.id}`)
+    .then((response) => response.json())
+    .then((itemDetails) => {
+        newArticle.setAttribute('data-id', itemDetails._id);
+        imgElement.src = itemDetails.imageUrl;
+        imgElement.alt = itemDetails.altTxt;
+        h2Element.innerText = itemDetails.name;
+        pPriceElement.innerText = itemDetails.price;
+        const pDeleteElement = document.createElement('p');
+        pDeleteElement.className = 'deleteItem';
+        pDeleteElement.innerText = 'Supprimer';
+        cartItemContentSettingsDeleteElement.append(pDeleteElement);
 
         //Mise à jour des totaux lors de l'ouverture du panier                
             totalQuantity = parseInt(totalQuantity) + parseInt(item.quantity);
@@ -141,8 +152,11 @@ console.log(item.id);
                             totalPriceElement.innerHTML = totalPrice;
                             totalQuantity -= eQuantity;
                             totalQuantityElement.innerHTML = totalQuantity;
+                            console.log(indexToDelete);
             //Suppression de l'item                
                             cart.splice(indexToDelete,1)
+                            console.log(indexToDelete);
+
                             eArticle.remove();
                             localStorage.setItem("cart", JSON.stringify(cart));
                         }
