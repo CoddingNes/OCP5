@@ -41,7 +41,7 @@ if (cart) {
 //    for (let i = 0; i < cart.length; i++) {
 //        let item = cart[i];
 cart.forEach(item => {
-    console.log(item.id);
+//    console.log(item.id);
     const cartItems = document.querySelector('#cart__items');
 
 //Créer et configurer un nouvel article pour chaque item  
@@ -118,7 +118,12 @@ cart.forEach(item => {
                     let eId = eArticle.getAttribute("data-id");
                     let eColors = eArticle.querySelector(".cart__item__content__description p");
                     let ePrice = eArticle.querySelector(".cart__item__content__description p:nth-of-type(2)").innerText;
-
+                    if (eQuantity < 1) {
+                        input.closest(".itemQuantity").value = 1;
+                        console.log("modif")
+                    } else if (eQuantity > 100) {
+                        input.closest(".itemQuantity").value = 100;
+                    }
                     totalQuantity = 0;
                     cart.forEach(item => {
                         if (item.id == eId && item.colors === eColors.innerText) {
@@ -155,8 +160,6 @@ cart.forEach(item => {
                             console.log(indexToDelete);
             //Suppression de l'item                
                             cart.splice(indexToDelete,1)
-                            console.log(indexToDelete);
-
                             eArticle.remove();
                             localStorage.setItem("cart", JSON.stringify(cart));
                         }
