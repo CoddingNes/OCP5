@@ -45,20 +45,24 @@ boutton.addEventListener('click', (e) => {
         alert("Veuillez choisir une couleur.");
     } else if (quantity.value == 0) {
         alert("Attention! Vous n'avez pas saisi de quantité!");
+    } else if (quantity.value < 0) {
+        alert("Veuillez saisir une quantité valide!");
+        quantity.value = 1;
     } else {
 //Si le panier est vide, créer tableau en ajoutant les données
         if (!localStorage.getItem('cart')) {
-            if (quantity.value < 1 || quantity.value > 100 || colors.value == "") {
-                alert("Veuillez saisir un nombre d'article entre 1 et 100 et choisir une couleur.");
+            if (parseInt(quantity.value) > 100) {
+                alert("Attention! Vous ne pouvez commander que 100 unités maximum!");
+                quantity.value = 100;
             } else {
-            console.log("Créons le panier!");
-            let cart = [{
-                id : id,
-                quantity : quantity.value,
-                colors : colors.value
-            }];
-            localStorage.setItem("cart", JSON.stringify(cart))
-            alert("Votre produit a bien été ajouté au panier");
+                console.log("Créons le panier!");
+                let cart = [{
+                    id : id,
+                    quantity : quantity.value,
+                    colors : colors.value
+                }];
+                localStorage.setItem("cart", JSON.stringify(cart))
+                alert("Votre produit a bien été ajouté au panier");
             }
         }
 //Si le panier n'est pas vide 
@@ -74,33 +78,40 @@ boutton.addEventListener('click', (e) => {
 //Fonction appliquée si le panier n'est pas vide
 const addOrPush = (cart) => {
     let addNew = true; //True pour ajouter nouvel item, passe en False s'il existe déjà
+    let okValue = true; //True pour une valeur saisie correcte, l'ajout au panier est enregistré
     cart.forEach(item => {
         if (item.id == id && item.colors === colors.value) {
             addNew = false;
-            if ((item.quantity + quantity.value) > 100) {
-                let retirerItem = (item.quantity + quantity.value) - 100;
-                alert(`Le nombre total de cet article doit être compris entre 1 et 100, veuillez retirer au moins ${retirerItem} article(s)`);
-            } else if ((item.quantity + quantity.value) < 0) {
-                let ajouterItem = (item.quantity + quantity.value);
-                alert(`Le nombre total de cet article doit être compris entre 1 et 100, veuillez ajouter au moins ${ajouterItem} article(s)`);
+            if (item.quantity == 100) {
+                alert(`Attention! Vous ne pouvez commander que 100 unités maximum.`);
+                quantity.value = 1;
+                okValue = false;
+            } else if ((parseInt(item.quantity) + parseInt(quantity.value)) > 100) {
+                alert(`Attention! Vous ne pouvez commander que 100 unités maximum. Vous ne pouvez ajouter que ${100-item.quantity} unités de ce modèle`);
+                quantity.value = 100-item.quantity;
+                okValue = false;
             } else {
                 console.log("L'item existe déjà dans le panier, incrémentons-le");
                 item.quantity = parseInt(item.quantity) + parseInt(quantity.value);
-
-                localStorage.setItem("cart", JSON.stringify(cart));
             }
-        } else if (quantity.value < 1 || quantity.value > 100) {
-            alert("Veuillez saisir un nombre d'article entre 1 et 100 et choisir une couleur.");
-        } 
+        }
     });
     if (addNew) {
-        console.log("Ajoutons l'item au panier");
-        cart.push({
-            id : id,
-            quantity : quantity.value,
-            colors : colors.value
-        });
-        localStorage.setItem("cart", JSON.stringify(cart));
+        if (parseInt(quantity.value) > 100) {
+            alert("Attention! Vous ne pouvez commander que 100 unités maximum!");
+            quantity.value = 100;
+            okValue = false;
+        } else {
+            console.log("Ajoutons l'item au panier");
+            cart.push({
+                id : id,
+                quantity : quantity.value,
+                colors : colors.value
+            });
+        }
     };
-    alert("Votre produit a bien été ajouté au panier");
+    if (okValue) {
+        localStorage.setItem("cart", JSON.stringify(cart));
+        alert("Votre produit a bien été ajouté au panier");
+    };
 };

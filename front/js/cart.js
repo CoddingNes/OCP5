@@ -38,10 +38,7 @@ if (cart) {
     let totalPrice = 0;
 
     //Appel ciblé de l'API pour chaque item
-//    for (let i = 0; i < cart.length; i++) {
-//        let item = cart[i];
-cart.forEach(item => {
-//    console.log(item.id);
+    cart.forEach(item => {
     const cartItems = document.querySelector('#cart__items');
 
 //Créer et configurer un nouvel article pour chaque item  
@@ -167,15 +164,13 @@ cart.forEach(item => {
                     })
                 });
             }
-
-//        })
         })
     })
 
 
 
 
-    //Contrôle du formulaire
+//Contrôle du formulaire
 
     //Sélection des éléments d'entrée du formulaire
     const formPrenomElement = document.querySelector("#firstName");
@@ -201,12 +196,6 @@ cart.forEach(item => {
     const adresseErrorText = 'Veuillez saisir une adresse valide ' 
     const villeErrorText = 'Veuillez saisir une ville valide ' 
     const emailErrorText = 'Veuillez saisir un email valide ' 
-/*    //Récupération des données
-    let prenom = "";
-    let nom = "";
-    let adresse = "";
-    let ville = "";
-    let email = "";*/
 
     //Fonction d'affichage des erreurs de saisie du formulaire
     function errorText (e, masque, element, message) {
@@ -290,7 +279,6 @@ cart.forEach(item => {
         }
     });
 
-    //}
 }
 
                                                                                 
