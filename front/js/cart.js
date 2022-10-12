@@ -10,13 +10,15 @@ if (!cart || cart.length == 0) {
 
 //Tri des items du Cart par ID
 function sortCart(x, y){
-    if (x.id < y.id) {return -1;}
-    if (x.id > y.id) {return 1;}
-    return 0;
+    if (cart && cart != 0) {
+        if (x.id < y.id) {return -1;}
+        if (x.id > y.id) {return 1;}
+        return 0;
+        var sortedCart = cart.sort(sortCart);
+        localStorage.setItem("cart", JSON.stringify(sortedCart));
+        console.log(sortedCart);
+    }
 }
-var sortedCart = cart.sort(sortCart);
-localStorage.setItem("cart", JSON.stringify(sortedCart));
-console.log(sortedCart);
 
 
 //Fonction masquer le formulaire de commande
